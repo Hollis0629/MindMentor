@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMentor - Your Mental Health Psychology Tutor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .disclaimer {
+            background: #ffe0b2;
+            color: #a04000;
+            padding: 10px 20px;
+            font-size: 1em;
+            text-align: center;
+        }
+        .resources {
+            text-align: right;
+            margin: 5px 15px 0 0;
+        }
+        .resource-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .progress-bar {
+            height: 4px;
+            background: #eee;
+            margin: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .topic-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px;
+        }
+        .topic-btn {
+            padding: 10px 20px;
+            background: #f0f7ff;
+            color: #1976d2;
+            border: 2px solid #e3f2fd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        .topic-btn:hover, .resource-btn:hover {
+            background: #1976d2;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tutor-message {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 20px 20px 20px 5px;
+            margin-right: 50px;
+            position: relative;
+        }
+        .tutor-message::before {
+            content: "🧠";
+            position: absolute;
+            left: -40px;
+            top: 10px;
+            font-size: 1.5em;
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
+        }
+        .user-message {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 15px 20px;
+            border-radius: 20px 20px 5px 20px;
+            margin-left: 50px;
+            text-align: right;
+        }
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        #userInput {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        #userInput:focus {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+        #sendBtn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        #sendBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .feedback {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: flex-end;
+            margin: 10px 20px 0 0;
+        }
+        .feedback button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .feedback-label {
+            font-size: 1em;
+            color: #444;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background: rgba(0,0,0,0.35);
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px 18px;
+            max-width: 400px;
+            margin: 50px auto;
+            position: relative;
+            text-align: left;
+        }
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 1.3em;
+            margin-left: 8px;
+        }
+        .modal ul {
+            padding-left: 16px;
+            margin-top: 12px;
+        }
+        .modal li {
+            margin-bottom: 10px;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 3px; border-radius: 8px; }
+            .header h1 { font-size: 1.4em; }
+            .header p { font-size: 1em; }
+            .chat-container { height: 330px; padding: 8px; }
+            .input-area { padding: 8px; }
+            .stat-number { font-size: 1em; }
+            .topic-btn, .resource-btn { font-size: 1em; padding: 12px 16px; }
+            .modal-content { padding: 10px 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="disclaimer">
+            <strong>Disclaimer:</strong> MindMentor is for educational purposes only and does not provide medical advice. If you need support, please contact a licensed mental health professional.
+        </div>
+        <div class="resources">
+            <button class="resource-btn" onclick="showResources()">Get Help</button>
+        </div>
+        <div class="header">
+            <h1>MindMentor 🧠</h1>
+            <p>Your Personal Mental Health Psychology Tutor</p>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="topic-buttons" id="topicButtons">
+            <button class="topic-btn" onclick="startTopic('anxiety')">Anxiety Disorders</button>
+            <button class="topic-btn" onclick="startTopic('depression')">Depression & Mood</button>
+            <button class="topic-btn" onclick="startTopic('therapy')">Therapy Approaches</button>
+            <button class="topic-btn" onclick="startTopic('stress')">Stress Management</button>
+            <button class="topic-btn" onclick="startTopic('cognitive')">Cognitive Psychology</button>
+            <button class="topic-btn" onclick="startTopic('assessment')">Mental Health Assessment</button>
+        </div>
+        <div class="feedback" id="topicFeedback" style="display:none;">
+            <span class="feedback-label">Was this topic helpful?</span>
+            <button onclick="submitFeedback('yes')" aria-label="Yes, helpful">👍</button>
+            <button onclick="submitFeedback('no')" aria-label="No, not helpful">👎</button>
+        </div>
+        <div class="chat-container" id="chatContainer">
+            <div class="message">
+                <div class="tutor-message">
+                    Hello! I'm MindMentor, your personal mental health psychology tutor. I'm here to help you understand complex psychological concepts, explore real-world applications, and develop critical thinking skills in mental health.
+                    <br><br>
+                    <strong>My role:</strong> I'll guide you through psychology concepts using the Socratic method, asking questions that help you build your own understanding rather than just giving you answers.
+                    <br><br>
+                    What would you like to explore today? You can choose a topic above or tell me what specific area of mental health psychology interests you!
+                </div>
+            </div>
+        </div>
+        <div class="input-area">
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="Share your thoughts or ask a question..." onkeypress="handleKeyPress(event)">
+                <button id="sendBtn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="questionsAsked">0</div>
+                <div class="stat-label">Questions Explored</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="conceptsLearned">0</div>
+                <div class="stat-label">Concepts Discussed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="reflectionsMade">0</div>
+                <div class="stat-label">Personal Reflections</div>
+            </div>
+        </div>
+    </div>
+    <!-- Resources Modal -->
+    <div id="resourcesModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeResources()" class="close">&times;</span>
+            <h3>Mental Health Support Resources</h3>
+            <ul>
+                <li><a href="https://988lifeline.org/" target="_blank">Suicide & Crisis Lifeline (US): Call or text 988</a></li>
+                <li><a href="https://www.crisistextline.org/" target="_blank">Crisis Text Line: Text HOME to 741741</a></li>
+                <li><a href="https://www.samhsa.gov/find-help/national-helpline" target="_blank">SAMHSA National Helpline: 1-800-662-HELP (4357)</a></li>
+                <li><a href="https://www.psychologytoday.com/us/therapists" target="_blank">Find a Therapist (Psychology Today Directory)</a></li>
+                <li><a href="https://www.befrienders.org/" target="_blank">International Helplines (Befrienders Worldwide)</a></li>
+            </ul>
+            <p style="font-size:0.95em;color:#555;margin-top:10px;">If you are in immediate danger, please call emergency services.</p>
+        </div>
+    </div>
+    <script>
+        let conversationHistory = [];
+        let currentTopic = null;
+        let userLevel = 'intermediate'; // beginner, intermediate, advanced
+        let questionsAsked = 0;
+        let conceptsLearned = 0;
+        let reflectionsMade = 0;
+        const psychologyKnowledge = {
+            anxiety: {
+                concepts: ['GAD', 'panic disorder', 'phobias', 'social anxiety', 'PTSD', 'fight-flight-freeze'],
+                examples: ['exam anxiety', 'public speaking fears', 'social situations', 'trauma responses'],
+                analogies: ['alarm system', 'smoke detector sensitivity', 'protective bubble'],
+                questions: [
+                    "What do you think happens in your body when you feel anxious?",
+                    "Can you think of a time when anxiety might actually be helpful?",
+                    "How might someone's past experiences shape their anxiety responses?",
+                    "What's the difference between normal worry and clinical anxiety?"
+                ]
+            },
+            depression: {
+                concepts: ['MDD', 'dysthymia', 'bipolar', 'neurotransmitters', 'cognitive triad', 'learned helplessness'],
+                examples: ['seasonal depression', 'postpartum depression', 'grief vs depression'],
+                analogies: ['dark cloud', 'broken filter', 'depleted battery'],
+                questions: [
+                    "How would you explain the difference between sadness and depression?",
+                    "What role do you think thoughts play in maintaining depression?",
+                    "Why might some people be more vulnerable to depression than others?",
+                    "How do you think depression affects someone's view of the future?"
+                ]
+            },
+            therapy: {
+                concepts: ['CBT', 'DBT', 'psychodynamic', 'humanistic', 'therapeutic alliance', 'transference'],
+                examples: ['thought records', 'exposure therapy', 'mindfulness', 'free association'],
+                analogies: ['mental gym', 'detective work', 'gardening the mind'],
+                questions: [
+                    "What do you think makes therapy effective?",
+                    "How might different therapy approaches suit different people?",
+                    "What role does the relationship between therapist and client play?",
+                    "Why might someone resist change even when they want to feel better?"
+                ]
+            },
+            stress: {
+                concepts: ['acute vs chronic stress', 'cortisol', 'coping mechanisms', 'resilience', 'stress-vulnerability model'],
+                examples: ['work stress', 'academic pressure', 'relationship conflicts', 'major life changes'],
+                analogies: ['pressure cooker', 'rubber band', 'muscle fatigue'],
+                questions: [
+                    "What's the difference between stress and stressors?",
+                    "How do you think long-term stress affects the body and mind?",
+                    "What makes some people more resilient to stress than others?",
+                    "Can you think of ways stress might sometimes be beneficial?"
+                ]
+            },
+            cognitive: {
+                concepts: ['schemas', 'automatic thoughts', 'cognitive distortions', 'information processing', 'attention', 'memory bias'],
+                examples: ['catastrophizing', 'confirmation bias', 'mind reading', 'selective attention'],
+                analogies: ['mind as a computer', 'lens/filter', 'mental shortcut'],
+                questions: [
+                    "How do thought patterns influence emotions and behavior?",
+                    "What is a cognitive distortion and can you give an example?",
+                    "Why do people sometimes jump to conclusions?",
+                    "How do attentional biases affect perception?"
+                ]
+            },
+            assessment: {
+                concepts: ['clinical interview', 'psychometrics', 'screening tools', 'validity', 'reliability', 'diagnostic criteria'],
+                examples: ['Beck Depression Inventory', 'MMPI', 'structured interview'],
+                analogies: ['medical checkup', 'data gathering', 'puzzle'],
+                questions: [
+                    "What makes a good psychological assessment?",
+                    "How do clinicians decide which assessment tools to use?",
+                    "Why is reliability important?",
+                    "How would you balance structured vs unstructured assessment?"
+                ]
+            }
+        };
+        function addMessage(message, isUser = false) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            const messageClass = isUser ? 'user-message' : 'tutor-message';
+            messageDiv.innerHTML = `<div class="${messageClass}">${message}</div>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            conversationHistory.push({message, isUser, timestamp: Date.now()});
+        }
+        function generateResponse(userInput) {
+            const input = userInput.toLowerCase();
+            if (input.includes('i don\'t understand') || input.includes('confused')) {
+                userLevel = 'beginner';
+            } else if (input.includes('research') || input.includes('studies') || input.includes('neuroscience')) {
+                userLevel = 'advanced';
+            }
+            if (input.includes('i feel') || input.includes('my experience') || input.includes('personally')) {
+                reflectionsMade++;
+                document.getElementById('reflectionsMade').textContent = reflectionsMade;
+            }
+            if (currentTopic && psychologyKnowledge[currentTopic]) {
+                const topicData = psychologyKnowledge[currentTopic];
+                for (let concept of topicData.concepts) {
+                    if (input.includes(concept.toLowerCase())) {
+                        conceptsLearned++;
+                        document.getElementById('conceptsLearned').textContent = conceptsLearned;
+                        break;
+                    }
+                }
+                if (Math.random() < 0.6) {
+                    const randomQuestion = topicData.questions[Math.floor(Math.random() * topicData.questions.length)];
+                    return `That's an interesting point! ${randomQuestion} Take your time to think about it - there's no rush.`;
+                }
+            }
+            const responses = [
+                `I can see you're thinking deeply about this. What led you to that conclusion? Can you walk me through your reasoning?`,
+                `That's a thoughtful response! How do you think this concept might apply to real-world situations you've encountered?`,
+                `Interesting perspective! What evidence or examples can you think of that might support or challenge this idea?`,
+                `You're making good connections! How might someone with a different background or experience view this differently?`,
+                `I notice you mentioned [concept]. Can you explain that in your own words and give me an example of how it might work?`,
+                `That shows good critical thinking! What questions does this raise for you about mental health treatment?`,
+                `You're on the right track! How do you think this relates to what we know about the brain and behavior?`,
+                `Great insight! If you were explaining this to a friend who's not studying psychology, how would you put it?`
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (message === '') return;
+            addMessage(message, true);
+            input.value = '';
+            questionsAsked++;
+            document.getElementById('questionsAsked').textContent = questionsAsked;
+            const progress = Math.min((questionsAsked * 10 + conceptsLearned * 15 + reflectionsMade * 20), 100);
+            document.getElementById('progressFill').style.width = progress + '%';
+            setTimeout(() => {
+                const response = generateResponse(message);
+                addMessage(response);
+            }, 900 + Math.random() * 700);
+        }
+        function startTopic(topic) {
+            currentTopic = topic;
+            document.getElementById('topicFeedback').style.display = 'flex';
+            const topicData = psychologyKnowledge[topic];
+            const responses = {
+                anxiety: `Great choice! Anxiety disorders are among the most common mental health conditions. Let's start with your current understanding - when you hear "anxiety disorder," what comes to mind? How would you distinguish between normal anxiety and something that might need clinical attention?`,
+                depression: `Depression is such an important topic in mental health. Before we dive deep, I'm curious about your perspective - how would you explain to someone the difference between feeling sad and experiencing clinical depression? What factors do you think contribute to someone developing depression?`,
+                therapy: `Therapeutic approaches are fascinating! There are so many different ways to help people heal and grow. What do you think makes therapy effective? Have you wondered why different approaches might work better for different people or problems?`,
+                stress: `Stress is something we all experience, but it affects everyone differently. Let's explore this together - can you think of the difference between stress that motivates you versus stress that overwhelms you? What do you think determines that difference?`,
+                cognitive: `Cognitive psychology gives us amazing insights into how our minds work! I'm curious about your thoughts - how do you think our thought patterns influence our emotions and behaviors? Can you think of an example from your own life?`,
+                assessment: `Mental health assessment is crucial for effective treatment. What do you think makes a good psychological assessment? If you were trying to understand someone's mental health, what kinds of information would you want to gather?`
+            };
+            addMessage(responses[topic] || "Let's explore this topic together! What specific aspect interests you most?");
+        }
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        // Feedback system: simple alert for now (can replace with backend call)
+        function submitFeedback(rating) {
+            document.getElementById('topicFeedback').style.display = 'none';
+            if (rating === 'yes') {
+                alert('Thank you for your feedback! Glad you found the topic helpful.');
+            } else {
+                alert('Thank you for your honesty! We aim to keep improving.');
+            }
+        }
+        // Resource Modal controls
+        function showResources() {
+            document.getElementById('resourcesModal').style.display = 'block';
+        }
+        function closeResources() {
+            document.getElementById('resourcesModal').style.display = 'none';
+        }
+        // Initial tutor enhancement
+        setTimeout(() => {
+            addMessage("I'm designed to help you think like a psychologist - I'll ask questions that encourage you to analyze, synthesize, and apply concepts rather than just memorize them. Remember, in psychology, there are often multiple valid perspectives on complex issues. What draws you to studying mental health?");
+        }, 2000);
+    </script>
+</body>
+</html>
